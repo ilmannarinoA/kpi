@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Il Mannarino — Come vengono calcolati i premi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    /* HEADER */
+    .header {
+      background: #1a1a1a;
+      padding: 36px 24px;
+      text-align: center;
+    }
+    .header h1 {
+      color: #D4AF37;
+      font-size: 28px;
+      letter-spacing: 4px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: #888;
+      font-size: 13px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* CONTAINER */
+    .container {
+      max-width: 760px;
+      margin: 36px auto;
+      padding: 0 16px;
+    }
+
+    /* INTRO */
+    .intro {
+      background: #fff;
+      border-radius: 8px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-left: 4px solid #D4AF37;
+    }
+    .intro p {
+      color: #555;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* SECTION TITLE */
+    .section-title {
+      font-size: 11px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #D4AF37;
+      margin: 32px 0 12px;
+    }
+
+    /* KPI CARD */
+    .kpi-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 22px 28px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .kpi-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .kpi-body h3 {
+      font-size: 15px;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 8px;
+    }
+    .kpi-body p {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.7;
+    }
+    .formula {
+      background: #f9f9f9;
+      border-left: 3px solid #D4AF37;
+      border-radius: 0 4px 4px 0;
+      padding: 10px 14px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #444;
+      line-height: 1.8;
+    }
+    .formula .plus  { color: #2e7d32; font-weight: bold; }
+    .formula .minus { color: #b71c1c; font-weight: bold; }
+
+    /* CONDIZIONI */
+    .conditions-box {
+      background: #fff;
+      border-radius: 8px;
+      padding: 24px 28px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      margin-bottom: 12px;
+    }
+    .conditions-box h3 {
+      font-size: 15px;
+      font-weight: bold;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .condition-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    .condition-item:last-child { border-bottom: none; }
+    .condition-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #D4AF37;
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+    .condition-item p {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+    .condition-item strong {
+      color: #1a1a1a;
+    }
+
+    /* ALERT BOX */
+    .alert {
+      background: #fff8e1;
+      border: 1px solid #D4AF37;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 32px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 20px; flex-shrink: 0; }
+    .alert p { font-size: 13px; color: #555; line-height: 1.6; }
+    .alert strong { color: #1a1a1a; }
+
+    /* COPERTO SECTION */
+    .coperto-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .coperto-item {
+      background: #f9f9f9;
+      border-radius: 6px;
+      padding: 16px;
+      border: 1px solid #e0e0e0;
+    }
+    .coperto-item .label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+    .coperto-item .value {
+      font-size: 20px;
+      font-weight: bold;
+      color: #1a1a1a;
+    }
+    .coperto-item .desc {
+      font-size: 12px;
+      color: #777;
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* FOOTER */
+    .footer {
+      background: #1a1a1a;
+      padding: 24px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    .footer p {
+      color: #555;
+      font-size: 12px;
+    }
+    .footer span {
+      color: #D4AF37;
+    }
+
+    @media (max-width: 560px) {
+      .kpi-card { flex-direction: column; }
+      .coperto-grid { grid-template-columns: 1fr; }
+      .header h1 { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>IL MANNARINO</h1>
+    <p>Come vengono calcolati i premi mensili</p>
+  </div>
+
+  <div class="container">
+
+    <!-- INTRO -->
+    <div class="intro">
+      <p>Questa pagina spiega in modo chiaro come vengono misurati i KPI e quali condizioni devono essere soddisfatte per accedere ai premi mensili. I premi vengono calcolati automaticamente ogni mese sulla base dei dati operativi di ogni negozio.</p>
+    </div>
+
+    <!-- KPI -->
+    <div class="section-title">Definizione KPI</div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">💰</div>
+      <div class="kpi-body">
+        <h3>Fatturato</h3>
+        <p>Totale ricavi generati nel periodo di riferimento.</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">⚡</div>
+      <div class="kpi-body">
+        <h3>HR Cost — Produttività</h3>
+        <p>Misura l'efficienza del lavoro rispetto ai ricavi generati.</p>
+        <div class="formula">
+          Ricavi ÷ Numero di ore lavorate nel periodo
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">🍽️</div>
+      <div class="kpi-body">
+        <h3>Food Cost</h3>
+        <p>Percentuale del costo delle materie prime rispetto ai ricavi.</p>
+        <div class="formula">
+          <span class="plus">+</span> Valorizzazione inventario iniziale Food &amp; Beverage<br>
+          <span class="plus">+</span> Acquisti del periodo Food &amp; Beverage<br>
+          <span class="minus">–</span> Valorizzazione inventario finale Food &amp; Beverage
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">⭐</div>
+      <div class="kpi-body">
+        <h3>Reputation</h3>
+        <p>Valutazione media delle recensioni ricevute nel periodo di riferimento.</p>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-body">
+        <h3>EBITDA Store</h3>
+        <p>Risultato operativo del negozio prima di interessi, tasse, svalutazioni e ammortamenti. Calcolato sul mese precedente.</p>
+        <div class="formula">
+          Ricavi<br>
+          <span class="minus">–</span> Food Cost<br>
+          <span class="minus">–</span> Cost of Labour<br>
+          <span class="minus">–</span> Costi variabili (manutenzioni, materiali di consumo, ecc.)<br>
+          <span class="minus">–</span> Costi fissi (affitti, utenze, tassa occupazione suolo pubblico, ecc.)
+        </div>
+      </div>
+    </div>
+
+    <div class="kpi-card">
+      <div class="kpi-icon">🧾</div>
+      <div class="kpi-body">
+        <h3>Indicatori di Coperto Medio</h3>
+        <p>Due metriche che misurano la qualità e la composizione degli scontrini.</p>
+        <div class="coperto-grid" style="margin-top:14px;">
+          <div class="coperto-item">
+            <div class="label">Coperto medio cena</div>
+            <div class="value">€39 – €42</div>
+            <div class="desc">Il coperto medio per persona a cena deve rientrare in questo intervallo</div>
+          </div>
+          <div class="coperto-item">
+            <div class="label">Scontrini &gt;€50</div>
+            <div class="value">≤ 10%</div>
+            <div class="desc">I coperti sopra €50 non devono superare il 10% del totale (esclusi i weekend)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONDIZIONI -->
+    <div class="section-title">Condizioni per accedere ai premi</div>
+
+    <div class="conditions-box">
+      <h3>Tutte le seguenti condizioni devono essere soddisfatte</h3>
+
+      <div class="condition-item">
+        <div class="condition-dot"></div>
+        <p><strong>Superamento della checklist operativa</strong><br>
+        La verifica operativa mensile deve risultare completata e positiva.</p>
+      </div>
+
+      <div class="condition-item">
+        <div class="condition-dot"></div>
+        <p><strong>Mystery Client ≥ 85%</strong><br>
+        La valutazione del Mystery Client deve essere pari o superiore all'85%.</p>
+      </div>
+
+      <div class="condition-item">
+        <div class="condition-dot"></div>
+        <p><strong>Assenza di sanzioni amministrative</strong><br>
+        Nessuna sanzione da parte degli enti di controllo nel periodo (ASL, NAS, Comune, Ispettorato del Lavoro, ecc.).</p>
+      </div>
+    </div>
+
+    <div class="alert">
+      <div class="alert-icon">⚠️</div>
+      <p>Il mancato rispetto anche di <strong>una sola</strong> delle condizioni sopra elencate comporta la <strong>non erogazione dei premi</strong> per il mese di riferimento, indipendentemente dai risultati KPI raggiunti.</p>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Comunicazione interna — <span>Il Mannarino</span></p>
+  </div>
+
+</body>
+</html>
